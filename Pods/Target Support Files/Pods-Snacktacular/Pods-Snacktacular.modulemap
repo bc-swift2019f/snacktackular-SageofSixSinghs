@@ -1,0 +1,6 @@
+framework module Pods_Snacktacular {
+  umbrella header "Pods-Snacktacular-umbrella.h"
+
+  export *
+  module * { export * }
+}
