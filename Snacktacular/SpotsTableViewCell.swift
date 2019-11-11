@@ -28,5 +28,5 @@ class SpotsTableViewCell: UITableViewCell {
         let distanceString = "Distance: \( (distanceInMeters * 0.00062137).roundTo(places: 2)  ) miles"
         distanceLabel.text = distanceString
     }
-
+    
 }
