@@ -28,6 +28,7 @@ class SpotDetailViewController: UIViewController {
     let regionDistance: CLLocationDistance = 750 // 750 meters or about a half mile
     var locationManager: CLLocationManager!
     var currentLocation: CLLocation!
+    var imagePicker = UIImagePickerController()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,6 +44,8 @@ class SpotDetailViewController: UIViewController {
         tableView.dataSource = self
         collectionView.delegate = self
         collectionView.dataSource = self
+        imagePicker.delegate = self
+        
         
         
         if spot == nil {
@@ -106,7 +109,12 @@ class SpotDetailViewController: UIViewController {
         updateMap()
     }
     
-    
+    func showAlert(title: String, message: String) {
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        let alertAction = UIAlertAction(title: "OK", style: .default, handler: nil)
+        alertController.addAction(alertAction)
+        present(alertController, animated: true, completion: nil)
+    }
     
     func updateMap() {
         mapView.removeAnnotations(mapView.annotations)
@@ -125,8 +133,12 @@ class SpotDetailViewController: UIViewController {
     
     func cameraOrLibraryAlert() {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        let cameraAction = UIAlertAction(title: "Camera", style: .default, handler: nil)
-        let photolibaryAction = UIAlertAction(title: "Photo Library", style: .default, handler: nil)
+        let cameraAction = UIAlertAction(title: "Camera", style: .default) { _ in
+            self.accessCamera()
+        }
+        let photolibaryAction = UIAlertAction(title: "Photo Library", style: .default) { _ in
+            self.accessLibrary()
+        }
         let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
         alertController.addAction(cameraAction)
         alertController.addAction(photolibaryAction)
@@ -290,4 +302,37 @@ extension SpotDetailViewController: UICollectionViewDelegate, UICollectionViewDa
         cell.photo = photos.photoArray[indexPath.row]
         return cell
     }
+}
+
+extension SpotDetailViewController: UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        let photo = Photo()
+        photo.image = info[UIImagePickerController.InfoKey.originalImage] as! UIImage
+        photos.photoArray.append(photo)
+        dismiss(animated: true) {
+            self.collectionView.reloadData()
+        }
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        dismiss(animated: true, completion: nil)
+    }
+    
+    func accessLibrary() {
+        imagePicker.sourceType = .photoLibrary
+        present(imagePicker, animated: true, completion: nil)
+    }
+    
+    func accessCamera() {
+        if UIImagePickerController.isSourceTypeAvailable(.camera) {
+            imagePicker.sourceType = .camera
+            present(imagePicker, animated: true, completion: nil)
+        } else {
+            showAlert(title: "Camera Not Available", message: "There is no camera available on this device.")
+        }
+    }
+    
+    
+    
 }
