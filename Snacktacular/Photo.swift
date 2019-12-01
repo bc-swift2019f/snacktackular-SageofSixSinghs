@@ -59,7 +59,7 @@ class Photo {
                 }
             
         }
-        
+         
         uploadTask.observe(.success) { (snapshot) in
             // Create the dictionary representing the data we want to save
             let dataToSave = self.dictionary
