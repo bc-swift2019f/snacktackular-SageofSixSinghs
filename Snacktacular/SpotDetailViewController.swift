@@ -388,3 +388,5 @@ extension SpotDetailViewController: UINavigationControllerDelegate, UIImagePicke
     
     
 }
+
+ 
